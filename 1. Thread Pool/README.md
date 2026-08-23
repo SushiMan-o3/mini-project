@@ -36,11 +36,33 @@ The benefit of using a thread pool comes from the fact that creating new threads
 ## Implementation
 For this thread pool in particular, the design that I am currently thinking about is doing if the taskQueue is basically double the amount of threads (i.e., 2 * threads = length of task queue), then the task queue will be increased by half of t he number of threads in the thread pool (i.e., number of threads = 1/2 * number of threads + number of threads). 
 
+Condition variable - essentially used to make sure that the cpu isnt running at a 100 percent when there are no tasks to be ran at the given moment. The thread goes to sleep so that it doesn't consume power when waiting. Submit basically notifies one of the sleeping threads to take on a new task.
+
 
 ## Important Concepts
 ### Concurrency vs Parellelism
 
 
 ### Synchronization
+
+
+#### Mutual Exclusion
+Mutual Exlucison is a part of sychronization where we are trying to protect the shared data from being touched by the two threads at the same time. 
+
+In the case of a thread pool a mutex (its nickname)  is essentially since you are essentially trying to prevent the threads from reading the task queue at the same time to prevent it from running the same task twice. 
+
+##### Mutex in C++
+- Lock - Locks up so that only the thread can touch it
+- Unlock - unlocks 
+
+###### Example from Claude
+Worker A takes the key. B reaches for it, no key, B waits by the hook — frozen, not looking at the queue at all.
+Worker A: reads front → "task #5", pops it (removes #5), pulls it into its local variable. The queue's front is now #6.
+Worker A hangs the key back.
+Worker B grabs the key. Now B reads the front → "task #6" (because #5 is already gone). B pops #6.
+Result: A runs #5, B runs #6. No duplication.
+
+When taking the key, it refers to locking it and when B reaches for it and there is no key it is a block, hanging the key is basically unlocking it so that b can start its task. 
+
 
 
