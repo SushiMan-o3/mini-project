@@ -8,15 +8,16 @@ Threads are similar to workers that a program can run. Each program starts with 
 
 A more sofisticated definition of a thread is an independent sequence of instructions a program can run. 
 
+
 ## How it works?
 There are three parts to a thread pool. 
 
-1. Worker Threads - The Actual threads that execute the task
+1. Worker Threads - The actual threads that execute the task (each has a worker function constantly running)
 2. Task Queue - Stores tasks that are waiting to be executed
 3. Thread Pool Manager - Decides what happens when a new task arrives (create a new thread or put it in the task queue)
 
 The general flow of how a thread pool works is demonstrated in the image below
-![alt text](image.png)
+<img width="1171" height="412" alt="Screenshot 2026-08-20 101007" src="https://github.com/user-attachments/assets/97b9f132-57c5-467e-9846-31512d9ec51b" />
 
 There are three main functions: 
 1. Submit() - Submits a new task to the thread pool and returns a future which allows you to retrive the result later
@@ -27,13 +28,13 @@ These functions are used to manage the thread pool.
 
 There are different factors that play a factor in the decisions that a thread pool makes. The following are corePoolSize, maximumPoolSize, workQueue, keepAliveTim and rejectionHandler. These factors determine what happen next in a thread queue such as create a new thread. 
 
-For this thread pool in particular, the design that I am currently thinking about is doing if the taskQueue is basically double the amount of threads (i.e., 2 * threads = length of task queue), then the task queue will be increased by half of t he number of threads in the thread pool (i.e., number of threads = 1/2 * number of threads + number of threads). 
-
 
 ## Why use a thread pool?
 The benefit of using a thread pool comes from the fact that creating new threads every single time is not efficent. So reusing the same threads over and over can save a lot of time and be more efficent in terms of CPU usage since it is using up less cores. 
 
+
 ## Implementation
+For this thread pool in particular, the design that I am currently thinking about is doing if the taskQueue is basically double the amount of threads (i.e., 2 * threads = length of task queue), then the task queue will be increased by half of t he number of threads in the thread pool (i.e., number of threads = 1/2 * number of threads + number of threads). 
 
 
 ## Important Concepts
