@@ -9,3 +9,8 @@ find_package(Threads REQUIRED)
 add_library(ThreadPool src/ThreadPool.cpp)
 target_include_directories(ThreadPool PUBLIC include)
 target_link_libraries(ThreadPool PUBLIC Threads::Threads)
+
+enable_testing()
+add_executable(thread_pool_tests tests/test_threadpool.cpp)
+target_link_libraries(thread_pool_tests PRIVATE ThreadPool)
+add_test(NAME ThreadPoolTests COMMAND thread_pool_tests)

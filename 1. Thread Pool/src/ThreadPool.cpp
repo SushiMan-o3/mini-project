@@ -62,6 +62,11 @@ void ThreadPool::submit(std::function<void()> task){
 
 void ThreadPool::execute(std::function<void()> task){
     task(); // executes the task function
+
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        shared_counter++;
+    }
 };
 
 void ThreadPool::shutDown(){

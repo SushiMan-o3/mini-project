@@ -33,9 +33,7 @@ There are different factors that play a factor in the decisions that a thread po
 The benefit of using a thread pool comes from the fact that creating new threads every single time is not efficent. So reusing the same threads over and over can save a lot of time and be more efficent in terms of CPU usage since it is using up less cores. 
 
 
-## Implementation
-For this thread pool in particular, the design that I am currently thinking about is doing if the taskQueue is basically double the amount of threads (i.e., 2 * threads = length of task queue), then the task queue will be increased by half of t he number of threads in the thread pool (i.e., number of threads = 1/2 * number of threads + number of threads). 
-
+## Implementation Note
 Condition variable - essentially used to make sure that the cpu isnt running at a 100 percent when there are no tasks to be ran at the given moment. The thread goes to sleep so that it doesn't consume power when waiting. Submit basically notifies one of the sleeping threads to take on a new task.
 
 When manipulating task queue in any sort of way the mutex needs to be called to ensure the queue is all locked in order to ensure that nothing else bothers it. 
@@ -43,9 +41,14 @@ When manipulating task queue in any sort of way the mutex needs to be called to 
 
 ## Important Concepts
 ### Concurrency vs Parellelism
+Concurrency is the idea of multiple tasks making progress during the same period. For example, one CPU core can switch back and forth between tasks very quickly.
 
+Parallelism is when multiple tasks are actually executing at the exact same time, usually on different CPU cores.
 
 ### Synchronization
+Synchronization is used to control the execution of multiple processes and threads so that resources are accessed in a proper and orderly manner. 
+
+In this case, we are controlling multiple threads by creating a thread pool. 
 
 
 #### Mutual Exclusion
@@ -55,7 +58,7 @@ In the case of a thread pool a mutex (its nickname)  is essentially since you ar
 
 ##### Mutex in C++
 - Lock - Locks up so that only the thread can touch it
-- Unlock - unlocks 
+- Unlock - unlocks it so that nothing else can touch it at the same time
 
 ###### Example from Claude
 Worker A takes the key. B reaches for it, no key, B waits by the hook — frozen, not looking at the queue at all.
