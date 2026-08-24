@@ -14,7 +14,7 @@ ThreadPool::ThreadPool(int numofthreads) {
 };
 
 ThreadPool::~ThreadPool() {
-    shutDown();
+    shutDown(); // if still running, shut down
 };
 
 
@@ -27,10 +27,21 @@ int ThreadPool::getThreadCount(){
 // Important functions
 
 void ThreadPool::worker(){
-    while (running) {
-        // should be a loop where it is either excuting the task
-        // or it should be sleeping until it is notifed that a 
-        // new task popped up then execute is called on it 
+    while (true) {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        condition.wait(lock, [this] { // waiting to be notified of something
+            return !taskQueue.empty() || !running; 
+        });
+
+        if (!running && taskQueue.empty()) {
+            return; // shutdown, nothing left
+        }
+
+        std::function<void()> task = taskQueue.front();
+        taskQueue.pop();
+        lock.unlock();
+
+        execute(task);
     }
 };
 
@@ -42,10 +53,11 @@ void ThreadPool::submit(std::function<void()> task){
             throw std::runtime_error("Thread pool is shut down");
         }
 
-        taskQueue.push(task);
+        taskQueue.push(task); // add to queue
     }
 
-    // notify one thread that a new task has been added
+    condition.notify_one(); // notifes one thread that a task was added
+
 }; 
 
 void ThreadPool::execute(std::function<void()> task){
@@ -53,12 +65,17 @@ void ThreadPool::execute(std::function<void()> task){
 };
 
 void ThreadPool::shutDown(){
-    running = false; 
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        running = false;
+    }
 
-    // waits till all threads are done executing
-    
+    condition.notify_all(); // notifes all threads to shut down
+
     // close all threads
     for (auto& worker: workers){
-        worker.join();
+        if (worker.joinable()) {
+            worker.join();
+        }
     }
 }; 
