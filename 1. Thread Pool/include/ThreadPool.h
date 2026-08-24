@@ -8,18 +8,13 @@
 #include <thread>
 #include <vector>
 
-// Task struct that contains task id and a function to execute
-struct Task {
-    int taskID;
-    std::function<void()> taskFunction;
-};
 
 class ThreadPool {
     private: // private cause it will only be called in the function
         int threadCount; // how many threads there are
         bool running; // whether program is running or not
 
-        std::queue<Task> taskQueue; // all tasks that haven't been finished
+        std::queue<std::function<void()>> taskQueue; // all tasks that haven't been finished
         std::vector<std::thread> workers; // contains all threads
 
         std::mutex queueMutex; // prevent multiple threads from running same task
@@ -29,21 +24,17 @@ class ThreadPool {
 
         void worker(); // each thread has a worker function it run that just executes tasks from queue
 
-        void execute(Task task); // executes task function
+        void execute(std::function<void()> task); // executes task function
 
 
     public: // public, user needs these functions
-
         // constructors and destructors
-        ThreadPool();
         ThreadPool(int threads);
         ~ThreadPool();
 
         int getThreadCount(); // returns the number of threads in the pool
 
-        void start(); // create threadcount number of worker queue, sets running to true and accepts tasks
-
-        void submit(Task task); // submits tasks to task queue
+        void submit(std::function<void()> task); // submits tasks to task queue
 
         void shutDown(); // finishes all tasks then closes all threads, sets running to false
 };

@@ -38,6 +38,8 @@ For this thread pool in particular, the design that I am currently thinking abou
 
 Condition variable - essentially used to make sure that the cpu isnt running at a 100 percent when there are no tasks to be ran at the given moment. The thread goes to sleep so that it doesn't consume power when waiting. Submit basically notifies one of the sleeping threads to take on a new task.
 
+When manipulating task queue in any sort of way the mutex needs to be called to ensure the queue is all locked in order to ensure that nothing else bothers it. 
+
 
 ## Important Concepts
 ### Concurrency vs Parellelism
