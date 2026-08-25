@@ -6,4 +6,7 @@ A way for me to make super small tiny projects to mess around and play around wi
 
 
 ## 1. Thread Pool
-Currently building it. 
+A working thread pool that creates multiple threads and preforms tasks in parellel to each other. Under /1.0 Thread Pool
+
+## 2. TCP Terminal Based Chat Room.
+Currently working on it!
